@@ -16,7 +16,7 @@
 
  SETUP INSTRUCTIONS
 
-1️⃣ Clone or download the repository.
+1️⃣ Download the zip file and extract it.
 
 2️⃣ Install Python libraries:
     > pip install -r requirements.txt
