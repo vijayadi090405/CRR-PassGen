@@ -1,0 +1,9 @@
+Flask
+whisper
+openai-whisper
+pydub
+python-docx
+pdfplumber
+transformers
+torch
+spacy

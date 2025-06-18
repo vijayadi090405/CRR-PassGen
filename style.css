@@ -1,0 +1,294 @@
+`static/style.css`
+```css
+/* Base reset and typography */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background: #ffffff;
+  color: #6b7280;
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 3rem 1rem;
+}
+
+/* Container with max width and glass effect */
+#app-container {
+  width: 100%;
+  max-width: 900px;
+  background: rgba(255 255 255 / 0.72);
+  backdrop-filter: saturate(180%) blur(12px);
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 25px rgba(107, 114, 128, 0.12);
+  padding: 2.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  /* smooth entrance */
+  animation: fadeIn 0.5s ease forwards;
+}
+
+/* Headings */
+h1 {
+  font-weight: 700;
+  font-size: 3.2rem;
+  color: #111827;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+p.subtitle {
+  font-weight: 500;
+  margin-bottom: 2rem;
+  color: #4b5563;
+  max-width: 600px;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Tiles container */
+.tiles {
+  display: flex;
+  gap: 1.25rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+/* Tiles styling */
+.tile {
+  background: white;
+  color: #374151;
+  border-radius: 0.75rem;
+  padding: 1rem 2rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  box-shadow: 0 3px 8px rgba(107, 114, 128, 0.1);
+  cursor: pointer;
+  user-select: none;
+  transition:
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+  min-width: 130px;
+  text-align: center;
+}
+
+.tile:hover,
+.tile:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(107, 114, 128, 0.15);
+  background-color: #e0e7ff;
+  outline: none;
+  border-color: #5b21b6;
+}
+
+.tile.selected {
+  background-color: #4f46e5;
+  color: white;
+  box-shadow: 0 8px 30px rgba(79, 70, 229, 0.45);
+  border-color: transparent;
+  pointer-events: auto;
+}
+
+/* Textarea */
+textarea#output {
+  width: 100%;
+  min-height: 120px;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+  padding: 1rem;
+  font-size: 16px;
+  font-family: monospace, monospace;
+  color: #374151;
+  resize: vertical;
+  background-color: white;
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.1);
+  transition: border-color 0.3s;
+}
+
+textarea#output:focus {
+  border-color: #6366f1;
+  outline-offset: 2px;
+  outline: 2px solid #6366f1;
+}
+
+/* Button group */
+.button-group {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 0.7rem;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.8rem 2rem;
+  background: #4f46e5;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+  transition:
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.2s ease;
+  user-select: none;
+  min-width: 140px;
+}
+
+button:hover,
+button:focus-visible {
+  background: #4338ca;
+  transform: translateY(-2px);
+  outline: none;
+}
+
+button:active {
+  transform: translateY(0);
+  background: #3730a3;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  background: #a5b4fc;
+  box-shadow: none;
+  transform: none;
+  color: #c7d2fe;
+}
+
+/* Extracted info tiles container */
+#infoTiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+/* Individual info tile */
+.info-tile {
+  background: white;
+  color: #374151;
+  border-radius: 0.75rem;
+  padding: 0.6rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 1px 5px rgb(0 0 0 / 0.06);
+  border: 1.5px solid transparent;
+  transition:
+    box-shadow 0.3s ease,
+    border-color 0.3s ease,
+    background-color 0.3s ease;
+  min-width: 100px;
+  text-align: center;
+}
+
+.info-tile:hover,
+.info-tile:focus-visible {
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.12);
+  border-color: #4f46e5;
+  outline: none;
+  background-color: #eef2ff;
+}
+
+.info-tile.selected {
+  background-color: #4338ca;
+  color: white;
+  box-shadow: 0 6px 15px rgba(67, 56, 202, 0.8);
+  border-color: transparent;
+}
+
+/* Passwords list */
+#passwords {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  padding: 0;
+  list-style: none;
+}
+
+#passwords li {
+  background: white;
+  padding: 0.5rem 1.2rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #4338ca;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 2px 10px rgb(67 56 202 / 0.2);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+  border: 2px solid transparent;
+  min-width: 120px;
+  text-align: center;
+}
+
+#passwords li:hover,
+#passwords li:focus-visible {
+  background-color: #4338ca;
+  color: white;
+  border-color: #4338ca;
+  outline: none;
+}
+
+/* Loading status */
+#loading {
+  margin-top: 1rem;
+  text-align: center;
+  font-weight: 600;
+  color: #57534e;
+  font-style: italic;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .tiles {
+    gap: 10px;
+  }
+  #app-container {
+    padding: 1.5rem;
+  }
+  button, .tile {
+    flex-grow: 1;
+  }
+  #passwords li {
+    min-width: 100%;
+  }
+}
+
+```

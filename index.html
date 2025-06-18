@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Password Generator</title>
+  <style>
+    /* Reset & base */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background: #f9fafb;
+      color: #6b7280;
+      line-height: 1.6;
+      font-size: 17px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    h1 {
+      font-weight: 700;
+      font-size: 3rem;
+      color: #111827;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+    p.subtitle {
+      font-weight: 500;
+      margin-bottom: 2rem;
+      color: #4b5563;
+      max-width: 900px;
+      text-align: left;
+    }
+    #app-container {
+      width: 100%;
+      max-width: 900px;
+      background: rgba(255 255 255 / 0.72);
+      backdrop-filter: saturate(180%) blur(12px);
+      border-radius: 0.75rem;
+      box-shadow: 0 10px 25px rgba(107, 114, 128, 0.12);
+      padding: 2rem 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .tiles {
+      display: flex;
+      gap: 1.25rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .tile {
+      background: white;
+      color: #374151;
+      border-radius: 0.75rem;
+      padding: 1rem 2rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+      box-shadow: 0 3px 8px rgba(107, 114, 128, 0.1);
+      cursor: pointer;
+      user-select: none;
+      transition:
+        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid transparent;
+    }
+    .tile:hover,
+    .tile:focus-visible {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(107, 114, 128, 0.15);
+      background-color: #e0e7ff;
+      outline: none;
+      border-color: #5b21b6;
+    }
+    .tile.selected {
+      background-color: #f7c146;
+      color: white;
+      box-shadow: 0 8px 30px rgba(79, 70, 229, 0.45);
+      pointer-events: auto;
+      border-color: transparent;
+    }
+
+    textarea#output {
+      width: 100%;
+      min-height: 120px;
+      border-radius: 0.5rem;
+      border: 1px solid #d1d5db;
+      padding: 1rem;
+      font-size: 16px;
+      font-family: monospace, monospace;
+      color: #374151;
+      resize: vertical;
+      background-color: white;
+      box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.1);
+      transition: border-color 0.3s;
+    }
+    textarea#output:focus {
+      border-color: #6366f1;
+      outline-offset: 2px;
+      outline: 2px solid #6366f1;
+    }
+
+    .button-group {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 0.9rem;
+  z-index: 1000; /* Make sure it's above other content */
+}
+
+    button {
+      border: none;
+      cursor: pointer;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.8rem 2rem;
+      background: #3d85c6;
+      color: #fff;
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+      transition:
+        background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.2s ease;
+      user-select: none;
+    }
+    button:hover,
+    button:focus-visible {
+      background: #4338ca;
+      transform: translateY(-2px);
+      outline: none;
+    }
+    button:active {
+      transform: translateY(0);
+      background: #3730a3;
+    }
+    button:disabled {
+      cursor: not-allowed;
+      background: #a2c4c9;
+      box-shadow: none;
+      transform: none;
+      color: #c7d2fe;
+    }
+
+    #infoTiles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+    .info-tile {
+      background: white;
+      color: #374151;
+      border-radius: 0.75rem;
+      padding: 0.6rem 1.5rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 1px 5px rgb(0 0 0 / 0.06);
+      border: 1.5px solid transparent;
+      transition:
+        box-shadow 0.3s ease,
+        border-color 0.3s ease,
+        background-color 0.3s ease;
+    }
+    .info-tile:hover,
+    .info-tile:focus-visible {
+      box-shadow: 0 4px 12px rgb(0 0 0 / 0.12);
+      border-color: #4f46e5;
+      outline: none;
+      background-color: #eef2ff;
+    }
+    .info-tile.selected {
+      background-color: #e06666;
+      color: white;
+      box-shadow: 0 6px 15px rgba(67, 56, 202, 0.8);
+      border-color: transparent;
+    }
+
+    #passwords {
+      margin-top: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+      padding: 0;
+      list-style: none;
+    }
+    #passwords li {
+      background: white;
+      padding: 0.5rem 1.2rem;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      font-size: 1rem;
+      color: #4338ca;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 2px 10px rgb(67 56 202 / 0.2);
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+      border: 2px solid transparent;
+      min-width: 120px;
+      text-align: center;
+    }
+    #passwords li:hover,
+    #passwords li:focus-visible {
+      background-color: #c27ba0;
+      color: white;
+      border-color: #741b47;
+      outline: none;
+    }
+
+    #loading {
+      margin-top: 1rem;
+      text-align: right;
+      font-weight: 600;
+      color: #57534e;
+      font-style: italic;
+    }
+    /* Responsive */
+    @media (max-width: 600px) {
+      .tiles {
+        gap: 10px;
+      }
+      #app-container {
+        padding: 1.5rem;
+      }
+      button, .tile {
+        flex-grow: 1;
+      }
+      #passwords li {
+        min-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main id="app-container" role="main" aria-label="Password Generator">
+    <h1>CRR PassGen</h1>
+    <p class="subtitle">Upload audio, video, or document files to extract text and generate strong, personalized passwords securely.</p>
+
+    <section aria-label="File upload options" class="tiles" role="list">
+      <div role="listitem"><button class="tile" type="button" id="btn-video" aria-pressed="false">Video Upload</button></div>
+      <div role="listitem"><button class="tile" type="button" id="btn-audio" aria-pressed="false">Audio Upload</button></div>
+      <div role="listitem"><button class="tile" type="button" id="btn-document" aria-pressed="false">CV Upload</button></div>
+    </section>
+
+    <input type="file" id="fileInput" style="display:none" aria-label="File input" />
+
+    <textarea id="output" placeholder="Extracted text will appear here..." aria-label="Extracted text output"></textarea>
+
+    <div class="button-group" role="group" aria-label="Actions">
+      <button type="button" id="extractBtn">Extract Info</button>
+      <button type="button" id="generateBtn">Generate Passwords</button>
+    </div>
+
+    <section aria-label="Extracted information" id="infoTiles" class="info-container"></section>
+
+    <ul id="passwords" aria-label="Generated passwords"></ul>
+
+    <div id="loading" role="status" aria-live="polite" style="display:none;">Processing...</div>
+  </main>
+
+  <script>
+    (() => {
+      let selectedFileType = "";
+      const fileInput = document.getElementById("fileInput");
+      const outputArea = document.getElementById("output");
+      const statusLoader = document.getElementById("loading");
+      const extractBtn = document.getElementById("extractBtn");
+      const generateBtn = document.getElementById("generateBtn");
+      const infoTilesContainer = document.getElementById("infoTiles");
+      const passwordsList = document.getElementById("passwords");
+      const tileButtons = {
+        video: document.getElementById("btn-video"),
+        audio: document.getElementById("btn-audio"),
+        document: document.getElementById("btn-document"),
+      };
+
+      function setLoading(isLoading) {
+        statusLoader.style.display = isLoading ? "block" : "none";
+        extractBtn.disabled = isLoading;
+        generateBtn.disabled = isLoading;
+        Object.values(tileButtons).forEach(btn => btn.disabled = isLoading);
+      }
+
+      // Update aria-pressed for tiles and track selected
+      function selectFileType(type) {
+        selectedFileType = type;
+        Object.entries(tileButtons).forEach(([key, btn]) => {
+          btn.setAttribute("aria-pressed", key === type ? "true" : "false");
+          btn.classList.toggle("selected", key === type);
+        });
+        fileInput.value = null;
+        fileInput.click();
+      }
+
+      Object.entries(tileButtons).forEach(([type, btn]) => {
+        btn.addEventListener("click", () => selectFileType(type));
+      });
+
+      fileInput.addEventListener("change", async () => {
+        if (fileInput.files.length === 0) return;
+        setLoading(true);
+
+        const formData = new FormData();
+        const file = fileInput.files[0];
+        formData.append("file", file);
+        formData.append("type", selectedFileType);
+
+        try {
+          const response = await fetch("/upload", {
+            method: "POST",
+            body: formData,
+          });
+          const data = await response.json();
+          if (data.error) {
+            outputArea.value = "";
+            alert(data.error);
+          } else {
+            outputArea.value = data.text || "";
+          }
+        } catch (e) {
+          alert("Error uploading file: " + e.message);
+        } finally {
+          setLoading(false);
+        }
+      });
+
+      extractBtn.addEventListener("click", async () => {
+        const text = outputArea.value.trim();
+        if (!text) {
+          alert("Please upload a file and extract the text first.");
+          return;
+        }
+        setLoading(true);
+        try {
+          const res = await fetch("/extract", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({text}),
+          });
+          const data = await res.json();
+          renderInfoTiles(data);
+        } catch (e) {
+          alert("Error extracting info: " + e.message);
+        } finally {
+          setLoading(false);
+        }
+      });
+
+      function renderInfoTiles(data) {
+        infoTilesContainer.innerHTML = "";
+        for (const [category, values] of Object.entries(data)) {
+          values.forEach(val => {
+            if (val && val.trim()) {
+              const div = document.createElement("button");
+              div.type = "button";
+              div.className = "info-tile";
+              div.textContent = val;
+              div.setAttribute("aria-pressed", "false");
+              div.addEventListener("click", () => {
+                const pressed = div.getAttribute("aria-pressed") === "true";
+                div.setAttribute("aria-pressed", (!pressed).toString());
+                div.classList.toggle("selected", !pressed);
+              });
+              infoTilesContainer.appendChild(div);
+            }
+          });
+        }
+      }
+
+      generateBtn.addEventListener("click", async () => {
+        // Gather selected info tiles text
+        const selectedTiles = Array.from(infoTilesContainer.querySelectorAll(".info-tile[aria-pressed='true']"));
+        if (selectedTiles.length === 0) {
+          alert("Please select at least one piece of extracted information.");
+          return;
+        }
+        const promptText = selectedTiles.map(t => t.textContent).join(", ");
+        setLoading(true);
+        try {
+          const res = await fetch("/generate-passwords", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({text: promptText}),
+          });
+          const passwords = await res.json();
+          renderPasswords(passwords);
+        } catch (e) {
+          alert("Error generating passwords: " + e.message);
+        } finally {
+          setLoading(false);
+        }
+      });
+
+      function renderPasswords(passwords) {
+        passwordsList.innerHTML = "";
+        passwords.forEach(pwd => {
+          const li = document.createElement("li");
+          li.tabIndex = 0;
+          li.textContent = pwd;
+          li.title = "Click to see password analysis";
+          li.addEventListener("click", () => analyzePassword(pwd));
+          li.addEventListener("keypress", (ev) => {
+            if (ev.key === "Enter" || ev.key === " ") {
+              ev.preventDefault();
+              analyzePassword(pwd);
+            }
+          });
+          passwordsList.appendChild(li);
+        });
+      }
+
+      async function analyzePassword(password) {
+        setLoading(true);
+        try {
+          const res = await fetch("/analyze-password", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({password}),
+          });
+          const data = await res.json();
+          alert(
+            `🔢 Brute-force position: ${data.position}\n` +
+            `⏱️ Estimated time: ${data.time_required.toFixed(2)} seconds\n` +
+            `📆 Approx. crack time: ${data.human_time}`
+          );
+        } catch (e) {
+          alert("Error analyzing password: " + e.message);
+        } finally {
+          setLoading(false);
+        }
+      }
+    })();
+  </script>
+</body>
+</html>
+
